@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.RadioGroup;
+import androidx.annotation.NonNull;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    public final static int SLICES_PER_PIZZA = 8;
+    private final String KEY_TOTAL_PIZZAS = "totalPizzas";
+    private int mTotalPizzas;
+
     private final static String TAG = "MainActivity";
     private EditText mNumAttendEditText;
     private TextView mNumPizzasTextView;
@@ -68,6 +70,18 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        // restore state
+        if (savedInstanceState != null) {
+            mTotalPizzas = savedInstanceState.getInt(KEY_TOTAL_PIZZAS);
+            displayTotal();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_TOTAL_PIZZAS, mTotalPizzas);
     }
 
     public void calculateClick(View view) {
@@ -77,29 +91,28 @@ public class MainActivity extends AppCompatActivity {
         try {
             String numAttendStr = mNumAttendEditText.getText().toString();
             numAttend = Integer.parseInt(numAttendStr);
-        }
-        catch (NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             numAttend = 0;
         }
-/*
+
         // Get hunger level selection
-        int checkedId = mHowHungryRadioGroup.getCheckedRadioButtonId();
-        PizzaCalculator.HungerLevel hungerLevel = PizzaCalculator.HungerLevel.RAVENOUS;
-        if (checkedId == R.id.hungerSpinner) {
-            hungerLevel = PizzaCalculator.HungerLevel.LIGHT;
-        }
-        else if (checkedId == R.id.hungerSpinner) {
-            hungerLevel = PizzaCalculator.HungerLevel.MEDIUM;
+        String hungerLevel = mHowHungrySpinner.getSelectedItem().toString();
+        PizzaCalculator calc;
+        if (hungerLevel.equals("Light")) {
+            calc = new PizzaCalculator(numAttend, PizzaCalculator.HungerLevel.LIGHT);
+        } else if (hungerLevel.equals("Medium")) {
+            calc = new PizzaCalculator(numAttend, PizzaCalculator.HungerLevel.MEDIUM);
+        } else {
+            calc = new PizzaCalculator(numAttend, PizzaCalculator.HungerLevel.RAVENOUS);
         }
 
         // Get the number of pizzas needed
-        PizzaCalculator calc = new PizzaCalculator(numAttend, hungerLevel);
-        int totalPizzas = calc.getTotalPizzas();
+        mTotalPizzas = calc.getTotalPizzas();
+        displayTotal();
+    }
 
-        // Place totalPizzas into the string resource and display
-        String totalText = getString(R.string.total_pizzas, totalPizzas);
+    private void displayTotal () {
+        String totalText = getString(R.string.total_pizzas, mTotalPizzas);
         mNumPizzasTextView.setText(totalText);
-
- */
     }
 }

@@ -1,7 +1,9 @@
 package com.zybooks.pizzaparty;
 
-public class PizzaCalculator {
+import android.util.Log;
 
+public class PizzaCalculator {
+    private static final String TAG = "PizzaCalculator";
     public enum HungerLevel {
         LIGHT, MEDIUM, RAVENOUS
     }
@@ -9,7 +11,7 @@ public class PizzaCalculator {
     public final static int SLICES_PER_PIZZA = 8;
 
     private HungerLevel mHungerLevel;
-    private int mPartySize;
+    private int mPartySize = 0;
 
     public PizzaCalculator(int partySize, HungerLevel level) {
         setHungerLevel(level);
@@ -36,6 +38,7 @@ public class PizzaCalculator {
 
     public int getTotalPizzas() {
         int slicesPerPerson;
+        Log.d(TAG, String.valueOf(mHungerLevel));
         if (mHungerLevel == HungerLevel.LIGHT) {
             slicesPerPerson = 2;
         }
@@ -45,6 +48,6 @@ public class PizzaCalculator {
         else {
             slicesPerPerson = 4;
         }
-        return (int) Math.ceil(mPartySize * slicesPerPerson / (double) SLICES_PER_PIZZA);
+        return(int) Math.ceil((mPartySize * slicesPerPerson) / (double) SLICES_PER_PIZZA);
     }
 }
